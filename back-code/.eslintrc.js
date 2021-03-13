@@ -16,6 +16,7 @@ module.exports = {
     '@typescript-eslint'
   ],
   'rules': {
+    // 'space-infix-ops': ['error', {'int32Hint': false}],
     'indent': [
       'error',
       2
