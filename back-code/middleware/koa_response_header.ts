@@ -8,6 +8,5 @@ export default async (
 ) => {
   const contentType = 'application/json;charset=utf-8'
   ctx.set('Content-Type', contentType)
-  ctx.body = '{ss:11}'
   await next()
 }
