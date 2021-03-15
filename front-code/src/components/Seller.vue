@@ -1,6 +1,11 @@
 <template>
   <div class="com-container">
-    <div ref="seller" class="com-chart"></div>
+    <div
+      @mouseenter="endInterval"
+      @mouseleave="startInterval"
+      ref="seller"
+      class="com-chart"
+    ></div>
   </div>
 </template>
 
@@ -10,35 +15,89 @@ import { dataType } from '@/types/types'
 
 @Component
 export default class Seller extends Vue {
+  // echarts对象
   private chartInstance: any = null
+  // 全部的数据
   private chartData: dataType[] = []
+  // 总页数
+  private totalPage = 0
+  // 页码
+  public currentPage = 1
+  // 每页显示的数量
+  public pageSize = 5
+  // 每隔多久更新数据的，定时器时间
+  private UPDATE_TIME = 3000
+  // 定时器对象
+  private intervalTimerId = 0
 
   mounted() {
     this.initChart()
     this.getData()
   }
 
-  async getData() {
+  destroy() {
+    clearInterval(this.intervalTimerId)
+  }
+
+  // 获取接口数据
+  async getData(): Promise<void> {
     const res = await this.$axios.get('/seller')
     if (res.data.code === 404) {
       console.error(res.data.message)
     }
     this.chartData = res.data
+    this.totalPage = Math.ceil(this.chartData.length / this.pageSize)
     // 获取到数据之后更新视图
     this.updateChart()
+    this.startInterval()
   }
 
-  initChart() {
+  // 初始化echarts实例
+  private initChart(): void {
     this.chartInstance = this.$echarts.init(this.$refs.seller as HTMLElement)
+    // this.chartInstance.on('mouseover', () => {
+    //   this.endInterval()
+    // })
+    // this.chartInstance.on('mouseout', () => {
+    //   this.startInterval()
+    // })
   }
 
-  updateChart() {
+  // 定时更新数据
+  startInterval(): void {
+    this.intervalTimerId && this.endInterval()
+    this.intervalTimerId = setInterval(() => {
+      this.currentPage++
+      this.updateChart()
+      // 如果是最后一页，则从0重新开始
+      if (this.currentPage >= this.totalPage) this.currentPage = 0
+    }, this.UPDATE_TIME)
+  }
+
+  // 关闭定时器
+  endInterval(): void {
+    clearInterval(this.intervalTimerId)
+    this.intervalTimerId = 0
+  }
+
+  // 获取需要显示的数据
+  getShowData(): { values: number[]; names: string[] } {
     const values: number[] = []
     const names: Array<string> = []
-    this.chartData.forEach(item => {
+    const start = (this.currentPage - 1) * this.pageSize
+    const end = this.currentPage * this.pageSize
+    // 截取需要显示的数据
+    const showData = this.chartData.slice(start, end)
+    showData.forEach(item => {
       values.push(item.value)
       names.push(item.name)
     })
+    values.sort((a, b) => a - b)
+    return { values, names }
+  }
+
+  updateChart(): void {
+    const { names, values } = this.getShowData()
     const option = {
       xAxis: {
         type: 'value'
