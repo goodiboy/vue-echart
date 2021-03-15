@@ -36,7 +36,7 @@ export default class Seller extends Vue {
   }
 
   destroy() {
-    clearInterval(this.intervalTimerId)
+    this.endInterval()
   }
 
   // 获取接口数据
@@ -55,12 +55,6 @@ export default class Seller extends Vue {
   // 初始化echarts实例
   private initChart(): void {
     this.chartInstance = this.$echarts.init(this.$refs.seller as HTMLElement)
-    // this.chartInstance.on('mouseover', () => {
-    //   this.endInterval()
-    // })
-    // this.chartInstance.on('mouseout', () => {
-    //   this.startInterval()
-    // })
   }
 
   // 定时更新数据
@@ -96,6 +90,7 @@ export default class Seller extends Vue {
     return { values, names }
   }
 
+  // 更新echarts视图
   updateChart(): void {
     const { names, values } = this.getShowData()
     const option = {
