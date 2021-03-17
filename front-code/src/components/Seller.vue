@@ -175,5 +175,5 @@ export default class Seller extends Vue {
     }
     this.chartInstance.setOption(option)
   }
-}
+} 
 </script>
