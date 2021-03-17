@@ -1,4 +1,6 @@
-(function (root, factory) {
+/* eslint-disable */
+// prettier-ignore
+;(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(['exports', 'echarts'], factory);
@@ -519,3 +521,4 @@
         }
     });
 }));
+/* eslint-enable */

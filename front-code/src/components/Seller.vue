@@ -1,17 +1,19 @@
 <template>
-  <div class="com-container">
+  <div class='com-container'>
     <div
-      @mouseenter="endInterval"
-      @mouseleave="startInterval"
-      ref="seller"
-      class="com-chart"
+      @mouseenter='endInterval'
+      @mouseleave='startInterval'
+      ref='seller'
+      class='com-chart'
     ></div>
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator'
 import { dataType } from '@/types/types'
+// 引入主题
+import '/static/theme/chalk'
 
 @Component
 export default class Seller extends Vue {
@@ -54,7 +56,10 @@ export default class Seller extends Vue {
 
   // 初始化echarts实例
   private initChart(): void {
-    this.chartInstance = this.$echarts.init(this.$refs.seller as HTMLElement)
+    this.chartInstance = this.$echarts.init(
+      this.$refs.seller as HTMLElement,
+      'chalk'
+    )
   }
 
   // 定时更新数据
@@ -94,6 +99,21 @@ export default class Seller extends Vue {
   updateChart(): void {
     const { names, values } = this.getShowData()
     const option = {
+      title: {
+        text: '▎商家销售统计',
+        textStyle: {
+          fontSize: 66
+        },
+        left: 40,
+        top: 20
+      },
+      grid: {
+        top: '15%',
+        left: '3%',
+        right: '6%',
+        bottom: '3%',
+        containLabel: true // 距离是包括坐标轴上的位置
+      },
       xAxis: {
         type: 'value'
       },
@@ -101,9 +121,56 @@ export default class Seller extends Vue {
         type: 'category',
         data: names
       },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'line',
+          z: 0,
+          lineStyle: {
+            type: 'solid',
+            width: 66,
+            color: '#2d3443'
+          }
+        }
+      },
       series: {
         type: 'bar',
-        data: values
+        data: values,
+        barWidth: 66,
+        label: {
+          show: true,
+          position: 'right',
+          color: 'white'
+        },
+        itemStyle: {
+          borderRadius: [0, 33, 33, 0],
+          /*
+          // 方法一
+          color: {
+            type: 'linear',
+            x:0,
+            y:0,
+            x2:1,
+            y2:0,
+            colorStops: [
+              {
+                offset: 0, color: '#5053ee'
+              },
+              {
+                offset: 1, color: '#ab6ee5'
+              }
+            ]
+          }
+          */
+          color: new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
+            {
+              offset: 0, color: '#5053ee'
+            },
+            {
+              offset: 1, color: '#ab6ee5'
+            }
+          ])
+        }
       }
     }
     this.chartInstance.setOption(option)
