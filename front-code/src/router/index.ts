@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Home from '../views/Home.vue'
 import SellerPage from '@/views/SellerPage.vue'
+import TrendPage from '@/views/TrendPage.vue'
 
 Vue.use(VueRouter)
 
@@ -10,6 +11,11 @@ const routes: Array<RouteConfig> = [
     path: '/seller/page',
     name: 'SellerPage',
     component: SellerPage
+  },
+  {
+    path: '/trend/page',
+    name: 'TrendPage',
+    component: TrendPage
   },
   {
     path: '/',
